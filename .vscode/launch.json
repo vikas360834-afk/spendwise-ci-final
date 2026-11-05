@@ -1,0 +1,51 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Backend: SpendWise API (:4000)",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/backend/src/server.js",
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "PORT": "4000",
+        "NODE_ENV": "development",
+        "DATA_DIR": "${workspaceFolder}/backend/data"
+      },
+      "restart": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Frontend: Chrome Debug (:5173)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "preLaunchTask": "Start Full Stack (Backend + Frontend)"
+    },
+    {
+      "name": "Frontend: Chrome Debug (:5174)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5174",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "preLaunchTask": "Start Full Stack on Port 5174"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest: Run All Backend Tests",
+      "program": "${workspaceFolder}/backend/node_modules/jest/bin/jest",
+      "args": ["--runInBand", "--coverage"],
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack: Backend + Frontend + Browser",
+      "configurations": ["Frontend: Chrome Debug (:5173)"]
+    }
+  ]
+}

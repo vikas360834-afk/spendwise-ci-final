@@ -1,0 +1,9 @@
+[
+  {
+    "id": "f60b5c47-5dbf-4af0-9180-eeaa627e5e66",
+    "name": "Prem",
+    "email": "prem@example.com",
+    "passwordHash": "$2a$10$Pzn8RJUFK2oQUGwqkc1F1ubJNdY2.QojwSNVXwq/Xi8rFjQa2uzuG",
+    "createdAt": "2026-11-05T02:33:37.929Z"
+  }
+]

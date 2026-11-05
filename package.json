@@ -1,0 +1,16 @@
+{
+  "name": "spendwise",
+  "private": true,
+  "version": "2.0.0",
+  "description": "SpendWise — Premium AI-Powered Expense Tracker (React + Express)",
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "dev": "node scripts/dev.cjs",
+    "seed:demo": "node backend/tools/seed-demo-user.cjs",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "test": "npm --prefix backend test",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix backend run start"
+  }
+}

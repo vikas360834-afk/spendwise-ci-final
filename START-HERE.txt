@@ -1,0 +1,74 @@
+SpendWise AI — WORKING COPY
+============================
+
+QUICK START (Windows)
+---------------------
+EASIEST: double-click  start.cmd
+   It installs dependencies automatically on first run, then starts
+   the API (:4000) and the web app (:5173).
+
+OR from a terminal in this folder:
+       npm run dev
+
+The first run may take 1-2 minutes while dependencies install.
+
+Then open:
+       http://localhost:5173
+
+To run the web app on a different port (for example 5174):
+       npm run dev -- --port 5174
+Then open:
+       http://localhost:5174
+The API still runs on :4000 and the Vite proxy is wired up automatically.
+
+Sign in with the demo account:
+       Email:    demo@spendwise.com
+       Password: demo1234
+
+(Or create your own account from the "Create Account" tab.)
+
+
+IF YOU SEE "vite is not recognized"
+-----------------------------------
+That only means dependencies are not installed yet. Run:
+       npm run install:all
+or simply run:
+       npm run dev
+which now installs them automatically.
+
+
+IMPORTANT — only run ONE copy of this project
+---------------------------------------------
+If another copy of SpendWise is already using port 4000, login will check
+that other copy's users and your credentials will look "invalid".
+`npm run dev` prints a warning if a port is already in use.
+
+
+VS CODE
+-------
+- Use the task: "Start Full Stack (Backend + Frontend)"
+- Or press F5 with: "Full Stack: Backend + Frontend + Browser"
+
+Do not open frontend/index.html directly with a static previewer unless the
+backend is running. If you preview on another port, the app automatically
+calls the API at http://localhost:4000.
+
+
+USEFUL COMMANDS
+---------------
+npm run dev            start backend (:4000) + frontend (:5173)
+npm run install:all    install backend + frontend dependencies
+npm run seed:demo      reset the demo account and its data
+npm run build          production build into frontend/dist
+npm test               backend Jest test suite
+npm run dev:backend    backend only
+npm run dev:frontend   frontend only
+
+
+TROUBLESHOOTING
+---------------
+- "vite is not recognized" -> npm run dev (auto-installs) or npm run install:all
+- Blank page / old screen  -> hard refresh with Ctrl+Shift+R
+- Login fails              -> check http://localhost:4000/health
+- Port already in use      -> stop the other SpendWise copy, then retry
+- "Session expired"        -> sign in again (the backend was restarted)

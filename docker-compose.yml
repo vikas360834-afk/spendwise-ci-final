@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # SpendWise Full-Stack Application Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spendwise-app
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET:-spendwise-super-secret-jwt-key-2026}
+      - DATA_DIR=/app/backend/data
+      - AI_API_KEY=${AI_API_KEY:-}
+      - AI_API_URL=${AI_API_URL:-https://api.openai.com/v1/chat/completions}
+      - AI_MODEL=${AI_MODEL:-gpt-4o-mini}
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=${DB_USER:-spendwise_user}
+      - DB_PASSWORD=${DB_PASSWORD:-spendwise_pass123}
+      - DB_NAME=${DB_NAME:-spendwise_db}
+    volumes:
+      - spendwise-data:/app/backend/data
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - spendwise-network
+
+  # MySQL Relational Database Service
+  mysql:
+    image: mysql:8.0
+    container_name: spendwise-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_secure_password_2026}
+      MYSQL_DATABASE: ${DB_NAME:-spendwise_db}
+      MYSQL_USER: ${DB_USER:-spendwise_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-spendwise_pass123}
+    volumes:
+      - spendwise-mysql-data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_secure_password_2026}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - spendwise-network
+
+volumes:
+  spendwise-data:
+    name: spendwise-data
+  spendwise-mysql-data:
+    name: spendwise-mysql-data
+
+networks:
+  spendwise-network:
+    driver: bridge

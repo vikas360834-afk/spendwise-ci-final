@@ -1,0 +1,86 @@
+name: SpendWise CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  # Backend Testing & Coverage
+  backend-test:
+    name: Backend Test Suite & Coverage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Backend Unit & Integration Tests
+        run: npm test
+
+  # Frontend Compilation & Verification
+  frontend-build:
+    name: Frontend Vite Production Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build React SPA
+        run: npm run build
+
+  # Multi-stage Container Build & Health Probe
+  docker-build:
+    name: Docker Container Build & Probe
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-build]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build SpendWise Image
+        run: docker build -t spendwise:latest .
+
+      - name: Spin up Test Container
+        run: |
+          docker run --rm -d --name spendwise-ci -p 4000:4000 \
+            -e JWT_SECRET=ci-test-secret-key-2026 \
+            spendwise:latest
+
+      - name: Wait for Healthcheck Probe
+        run: |
+          sleep 6
+          curl --fail --retry 5 --retry-delay 3 http://localhost:4000/health || exit 1
+
+      - name: Terminate Test Container
+        if: always()
+        run: docker stop spendwise-ci || true
